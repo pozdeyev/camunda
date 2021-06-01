@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: camunda
+  banner:
+    location: classpath:banner.txt
+  profiles:
+    active: dev
+  jackson:
+    default-property-inclusion: NON_NULL
+
+logging:
+  config: classpath:logback.xml
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+    default-models-expand-depth: -1
+    display-operation-id: true
+    display-request-duration: true
+    doc-expansion: none
