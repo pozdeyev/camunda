@@ -28,10 +28,4 @@ public class UpdateAccessRequest implements JavaDelegate {
 
     accessRequestService.update(entityId, approver, isApproved);
   }
-
-
-  //public void execute(DelegateExecution delegateExecution, String approver, Boolean isApprove) throws Exception {
-  //  Long entityId = (Long) delegateExecution.getVariable(ProcessVariableConstants.ENTITY_ID);
-//    accessRequestService.update(entityId, approver, isApprove);
-//  }
 }
