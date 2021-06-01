@@ -10,5 +10,6 @@ import java.util.Optional;
  * @since 25.05.2021 10:12
  */
 public interface AccessRequestRepository extends JpaRepository<AccessApprove, Long> {
-  Optional<AccessApprove> findOneByEntityId (Long entityId);
+
+  Optional<AccessApprove> findOneByEntityId(Long entityId);
 }

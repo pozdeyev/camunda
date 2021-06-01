@@ -25,7 +25,7 @@ public class CreateAccessRequest implements JavaDelegate {
     String comment = (String) delegateExecution.getVariable(ProcessVariableConstants.COMMENT);
     Long entityId = (Long) delegateExecution.getVariable(ProcessVariableConstants.ENTITY_ID);
 
-    Integer id= accessRequestService.create(entityId, username, comment);
+    Integer id = accessRequestService.create(entityId, username, comment);
     delegateExecution.setVariable(ProcessVariableConstants.ID, id);
   }
 }

@@ -11,13 +11,14 @@ public interface AccessRequestService {
 
   void update(Long entityId, String approver, Boolean isApproved);
 
-  ResponseEntity<String> startProcessApprove (AccessRequest accessRequest);
+  ResponseEntity<String> startProcessApprove(AccessRequest accessRequest);
 
   ResponseEntity<List<String>> getActiveProcessInstances();
 
   ResponseEntity<String> getTaskNameByProcessInstanceId(String processInstanceId);
 
-  ResponseEntity<String>  sendToProcessIsApproved(String processInstanceId, String approver,  Boolean isApprove);
+  ResponseEntity<String> sendToProcessIsApproved(
+      String processInstanceId, String approver, Boolean isApprove);
 
   ResponseEntity<String> deleteProcessByInstanceId(String processInstanceId);
 }
