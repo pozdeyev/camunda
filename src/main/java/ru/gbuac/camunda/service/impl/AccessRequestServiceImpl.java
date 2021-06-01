@@ -40,19 +40,16 @@ public class AccessRequestServiceImpl implements AccessRequestService {
 
   @Override
   public ResponseEntity<String> startProcessApprove(AccessRequest accessRequest) {
-
     Map<String, Object> vars = new HashMap<>();
     vars.put(ProcessVariableConstants.ENTITY_ID, accessRequest.getEntityId());
     vars.put(ProcessVariableConstants.USERNAME, accessRequest.getUsername());
     vars.put(ProcessVariableConstants.COMMENT, accessRequest.getComment());
-
     String processInstanceId =
         runtimeService
             .createProcessInstanceByKey("accessRequestHandling")
             .setVariables(vars)
             .execute()
             .getProcessInstanceId();
-
     ActivityInstance activityInstance = runtimeService.getActivityInstance(processInstanceId);
 
     return new ResponseEntity<>(
@@ -62,29 +59,55 @@ public class AccessRequestServiceImpl implements AccessRequestService {
 
   @Override
   public ResponseEntity<String> getTaskNameByProcessInstanceId(String processInstanceId) {
-    return new ResponseEntity<>(
-        getTaskByProcessInstanceId(processInstanceId).getName(), HttpStatus.OK);
+    try {
+      if (isProcessInstanceExist(processInstanceId)) {
+        return new ResponseEntity<>(
+            getTaskByProcessInstanceId(processInstanceId).getName(), HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Process instance not found", HttpStatus.NOT_FOUND);
+      }
+    } catch (Exception e) {
+      log.info(e.getMessage(), e);
+      return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
   }
 
   @Override
   public ResponseEntity<String> sendToProcessIsApproved(
       String processInstanceId, String approver, Boolean isApprove) {
-    Map<String, Object> variables = new HashMap<String, Object>();
-    variables.put(ProcessVariableConstants.APPROVER, approver);
-    variables.put(ProcessVariableConstants.IS_APPROVED, isApprove);
-    Task task = getTaskByProcessInstanceId(processInstanceId);
-    taskService.claim(task.getId(), "Dmitriy");
-    taskService.complete(task.getId(), variables);
-
-    return new ResponseEntity<>(
-        getTaskByProcessInstanceId(processInstanceId).getName(), HttpStatus.OK);
+    try {
+      if (isProcessInstanceExist(processInstanceId)) {
+        Map<String, Object> variables = new HashMap<String, Object>();
+        variables.put(ProcessVariableConstants.APPROVER, approver);
+        variables.put(ProcessVariableConstants.IS_APPROVED, isApprove);
+        Task task = getTaskByProcessInstanceId(processInstanceId);
+        taskService.claim(task.getId(), "Dmitriy");
+        taskService.complete(task.getId(), variables);
+        return new ResponseEntity<>(
+            getTaskByProcessInstanceId(processInstanceId).getName(), HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Process instance not found", HttpStatus.NOT_FOUND);
+      }
+    } catch (Exception e) {
+      log.info(e.getMessage(), e);
+      return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
   }
 
   @Override
   public ResponseEntity<String> deleteProcessByInstanceId(String processInstanceId) {
-    runtimeService.deleteProcessInstance(processInstanceId, "complete");
-    return new ResponseEntity<>(
-        "processInstanceId: " + processInstanceId + " is deleted", HttpStatus.OK);
+    try {
+      if (isProcessInstanceExist(processInstanceId)) {
+        runtimeService.deleteProcessInstance(processInstanceId, "complete");
+        return new ResponseEntity<>(
+            "processInstanceId: " + processInstanceId + " is deleted", HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Process instance not found", HttpStatus.NOT_FOUND);
+      }
+    } catch (Exception e) {
+      log.info(e.getMessage(), e);
+      return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
   }
 
   @Override
@@ -106,6 +129,11 @@ public class AccessRequestServiceImpl implements AccessRequestService {
   private Task getTaskByProcessInstanceId(String processInstanceId) {
     List<Task> taskList = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
     return taskList.get(0);
+  }
+
+  private Boolean isProcessInstanceExist(String processInstanceId) {
+    ActivityInstance activityInstance = runtimeService.getActivityInstance(processInstanceId);
+    return activityInstance != null;
   }
 
   @Override

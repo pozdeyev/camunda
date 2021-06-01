@@ -32,27 +32,27 @@ public class ProcessController {
       @RequestParam(name = "processInstanceId") String processInstanceId,
       @RequestParam(name = "approver") String approver,
       @RequestParam(name = "isApprove") Boolean isApprove) {
-    log.info("sendToProcessIsApproved");
+    log.info("sendToProcessIsApproved: " + processInstanceId);
     return accessRequestService.sendToProcessIsApproved(processInstanceId, approver, isApprove);
   }
 
   @GetMapping("/current_task_name")
   public ResponseEntity<String> getTaskNameByProcessInstanceId(
       @RequestParam(name = "processInstanceId") String processInstanceId) {
-    log.info("getTaskNameByProcessInstanceId()");
+    log.info("getTaskNameByProcessInstanceId: " + processInstanceId);
     return accessRequestService.getTaskNameByProcessInstanceId(processInstanceId);
   }
 
   @GetMapping("/active_processes")
   public ResponseEntity<List<String>> getActiveProcessInstances() {
-    log.info("getActiveProcessInstances()");
+    log.info("getActiveProcessInstances");
     return accessRequestService.getActiveProcessInstances();
   }
 
   @DeleteMapping("/delete_process")
   public ResponseEntity<String> deleteProcessByInstanceId(
       @RequestParam(name = "processInstanceId") String processInstanceId) {
-    log.info("deleteProcessByInstanceId()");
+    log.info("deleteProcessByInstanceId: " + processInstanceId);
     return accessRequestService.deleteProcessByInstanceId(processInstanceId);
   }
 }
